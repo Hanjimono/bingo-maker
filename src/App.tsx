@@ -1,3 +1,9 @@
+import Button from "@/ui/Actions/Button"
+
 export default function App() {
-  return <h1 className="">Hello world!</h1>
+  return (
+    <div>
+      <Button>Click</Button>
+    </div>
+  )
 }

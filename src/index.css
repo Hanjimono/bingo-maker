@@ -1,1 +1,150 @@
 @import "tailwindcss";
+
+@theme {
+  --font-icon: Material Symbols Rounded;
+
+  --width-gap-1\/12: calc(100% * 1 / 12 - (12 - 1) * (1.25rem / 12));
+  --width-gap-2\/12: calc(100% * 2 / 12 - (12 - 2) * (1.25rem / 12));
+  --width-gap-3\/12: calc(100% * 3 / 12 - (12 - 3) * (1.25rem / 12));
+  --width-gap-4\/12: calc(100% * 4 / 12 - (12 - 4) * (1.25rem / 12));
+  --width-gap-5\/12: calc(100% * 5 / 12 - (12 - 5) * (1.25rem / 12));
+  --width-gap-6\/12: calc(100% * 6 / 12 - (12 - 6) * (1.25rem / 12));
+  --width-gap-7\/12: calc(100% * 7 / 12 - (12 - 7) * (1.25rem / 12));
+  --width-gap-8\/12: calc(100% * 8 / 12 - (12 - 8) * (1.25rem / 12));
+  --width-gap-9\/12: calc(100% * 9 / 12 - (12 - 9) * (1.25rem / 12));
+  --width-gap-10\/12: calc(100% * 10 / 12 - (12 - 10) * (1.25rem / 12));
+  --width-gap-11\/12: calc(100% * 11 / 12 - (12 - 11) * (1.25rem / 12));
+
+  --gap-almost-same: 0.25rem;
+  --gap-close: 0.5rem;
+  --gap-same-level: 1.25rem;
+  --gap-other-level: 2rem;
+  --gap-other-level-large: 2.25rem;
+  --gap-same: unset;
+
+  --margin-almost-same: 0.25rem;
+  --margin-close: 0.5rem;
+  --margin-same-level: 1.25rem;
+  --margin-other-level: 2rem;
+  --margin-other-level-large: 2.25rem;
+  --margin-same: unset;
+  --margin-gap-1\/12: calc(100% * 1 / 12 - (12 - 1) * (1.25rem / 12));
+  --margin-gap-2\/12: calc(100% * 2 / 12 - (12 - 2) * (1.25rem / 12));
+  --margin-gap-3\/12: calc(100% * 3 / 12 - (12 - 3) * (1.25rem / 12));
+  --margin-gap-4\/12: calc(100% * 4 / 12 - (12 - 4) * (1.25rem / 12));
+  --margin-gap-5\/12: calc(100% * 5 / 12 - (12 - 5) * (1.25rem / 12));
+  --margin-gap-6\/12: calc(100% * 6 / 12 - (12 - 6) * (1.25rem / 12));
+  --margin-gap-7\/12: calc(100% * 7 / 12 - (12 - 7) * (1.25rem / 12));
+  --margin-gap-8\/12: calc(100% * 8 / 12 - (12 - 8) * (1.25rem / 12));
+  --margin-gap-9\/12: calc(100% * 9 / 12 - (12 - 9) * (1.25rem / 12));
+  --margin-gap-10\/12: calc(100% * 10 / 12 - (12 - 10) * (1.25rem / 12));
+  --margin-gap-11\/12: calc(100% * 11 / 12 - (12 - 11) * (1.25rem / 12));
+
+  --color-page: #231915;
+
+  --color-primary-main: #bb9457;
+  --color-primary-hover: #d4a96b;
+  --color-primary-pressed: #a37e4d;
+  --color-primary-text: #bb9457;
+  --color-primary-transparent: #a37e4d17;
+
+  --color-secondary-main: #5e503f;
+  --color-secondary-hover: #6f5c4a;
+  --color-secondary-pressed: #8f7a5f;
+  --color-secondary-text: #5e503f;
+
+  --color-success-main: #656d4a;
+  --color-success-hover: #7b8a5f;
+  --color-success-pressed: #4d5639;
+  --color-success-text: #2e3222;
+
+  --color-cancel-main: #b6ad90;
+  --color-cancel-hover: #c1b8a0;
+  --color-cancel-pressed: #a49b7e;
+  --color-cancel-text: #615c4c;
+
+  --color-remove-main: #d04a47;
+  --color-remove-hover: #e05a57;
+  --color-remove-pressed: #b63a37;
+  --color-remove-text: #3c0e0d;
+
+  --color-block-100: #decac3;
+  --color-block-200: #af9c95;
+  --color-block-300: #817069;
+  --color-block-400: #574641;
+  --color-block-500: #2f211c;
+  --color-block-600: #261a16;
+  --color-block-700: #1c1411;
+  --color-block-800: #130d0b;
+  --color-block-900: #090706;
+
+  --color-menu: #1c1815;
+
+  --color-form-main: #141414;
+  --color-form-disabled: #272626;
+  --color-form-border: #e5e7eb;
+
+  --color-mask: #212d42;
+
+  --z-index-under-mask: 100;
+
+  --z-index-popup-mask: 900;
+
+  --z-index-select: 1000;
+  --z-index-modal: 1050;
+  --z-index-snackbar: 1100;
+  --z-index-top: 2000;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+html {
+  color: #fff;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+body {
+  overflow: hidden;
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #b1b1b1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #c5c5c5;
+}
