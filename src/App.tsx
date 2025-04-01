@@ -1,9 +1,12 @@
-import Button from "@/ui/Actions/Button"
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom"
+import LoginPage from "./pages/login"
 
 export default function App() {
   return (
-    <div>
-      <Button>Click</Button>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" Component={LoginPage} />
+      </Routes>
+    </Router>
   )
 }
