@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-icon: Material Symbols Rounded;
+  --font-icon: "Material Icons";
 
   --width-gap-1\/12: calc(100% * 1 / 12 - (12 - 1) * (1.25rem / 12));
   --width-gap-2\/12: calc(100% * 2 / 12 - (12 - 2) * (1.25rem / 12));
