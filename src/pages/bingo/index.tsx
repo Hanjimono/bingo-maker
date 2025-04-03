@@ -9,6 +9,7 @@ import Beam from "@/ui/Layout/Beam"
 import WallDecorated from "@/ui/Layout/Decorators/WallDecorated"
 import Foundation from "@/ui/Layout/Foundation"
 import Frame from "@/ui/Layout/Frame"
+import Room, { HiddenRoom } from "@/ui/Layout/Room"
 import Title from "@/ui/Presentation/Title"
 import { useState } from "react"
 
@@ -26,22 +27,26 @@ export default function BingoPage() {
           <Beam>
             <Title uppercase>Bingo game</Title>
           </Beam>
-          <BingoActionPanel
-            bingoCards={bingoCards}
-            selectedCard={selectedFileName}
-            onSelectCard={setSelectedFileName}
-            selectCardType={selectedCardType}
-            onSelectCardType={setSelectedCardType}
-            shuffleItems={shuffleBingoCard}
-          />
-          {bingoCard && (
-            <BingoCardView
-              card={bingoCard}
-              type={selectedCardType}
-              onSelectItem={handleSelectItems}
-              onSwitchItem={handleSwitchItems}
+          <Room>
+            <BingoActionPanel
+              bingoCards={bingoCards}
+              selectedCard={selectedFileName}
+              onSelectCard={setSelectedFileName}
+              selectCardType={selectedCardType}
+              onSelectCardType={setSelectedCardType}
+              shuffleItems={shuffleBingoCard}
             />
-          )}
+          </Room>
+          <HiddenRoom isShown={!!bingoCard}>
+            {bingoCard && (
+              <BingoCardView
+                card={bingoCard}
+                type={selectedCardType}
+                onSelectItem={handleSelectItems}
+                onSwitchItem={handleSwitchItems}
+              />
+            )}
+          </HiddenRoom>
         </WallDecorated>
       </Frame>
     </Foundation>

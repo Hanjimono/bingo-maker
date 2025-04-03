@@ -1,3 +1,5 @@
+// service
+import { motion } from "framer-motion"
 // consts
 import { BingoItem } from "@/consts/types/bingo"
 // hooks
@@ -108,10 +110,14 @@ function BingoItemView({
   }
   const longPressEvent = useLongPress(handleLongTouch, handleClick, true, 300)
   return (
-    <div
+    <motion.div
       {...longPressEvent}
+      whileTap={{ scale: 0.95 }}
+      initial={{ scale: 0.9 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0 }}
       key={getItemName(item)}
-      className="relative w-32 h-32 border-2 border-form-border rounded-sm  flex items-center justify-center bg-block-500 hover:bg-block-400 cursor-pointer content-center text-center p-3 overflow-hidden break-after-auto"
+      className="relative min-w-32 min-h-32 max-w-32 max-h-32 border-2 border-form-border rounded-sm  flex items-center justify-center bg-block-500 hover:bg-block-400 cursor-pointer content-center text-center p-3 overflow-hidden break-after-auto"
     >
       {getItemName(item)}
       {isSelected && (
@@ -119,7 +125,7 @@ function BingoItemView({
           <Icon className="text-red-400" type="md" name="close" size={128} />
         </span>
       )}
-    </div>
+    </motion.div>
   )
 }
 export default BingoCardView
