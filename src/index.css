@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html body {
+  color: #2c2c2c;
+}
+
 @theme {
   --font-icon: "Material Icons";
 
@@ -40,13 +44,13 @@
   --margin-gap-10\/12: calc(100% * 10 / 12 - (12 - 10) * (1.25rem / 12));
   --margin-gap-11\/12: calc(100% * 11 / 12 - (12 - 11) * (1.25rem / 12));
 
-  --color-page: #231915;
+  --color-page: #e8e8e8;
 
-  --color-primary-main: #bb9457;
-  --color-primary-hover: #d4a96b;
-  --color-primary-pressed: #a37e4d;
-  --color-primary-text: #bb9457;
-  --color-primary-transparent: #a37e4d17;
+  --color-primary-main: #91cadd;
+  --color-primary-hover: #a3d4e5;
+  --color-primary-pressed: #7ab8d0;
+  --color-primary-text: #91cadd;
+  --color-primary-transparent: #91cadd;
 
   --color-secondary-main: #5e503f;
   --color-secondary-hover: #6f5c4a;
@@ -68,21 +72,21 @@
   --color-remove-pressed: #b63a37;
   --color-remove-text: #3c0e0d;
 
-  --color-block-100: #decac3;
-  --color-block-200: #af9c95;
-  --color-block-300: #817069;
-  --color-block-400: #574641;
-  --color-block-500: #2f211c;
-  --color-block-600: #261a16;
-  --color-block-700: #1c1411;
-  --color-block-800: #130d0b;
-  --color-block-900: #090706;
+  --color-block-100: #d0d2e1;
+  --color-block-200: #c0c2d1;
+  --color-block-300: #b0b2c1;
+  --color-block-400: #a0a2b1;
+  --color-block-500: #acaec3;
+  --color-block-600: #7b7d95;
+  --color-block-700: #4b4d69;
+  --color-block-800: #2c2e41;
+  --color-block-900: #1c1e2b;
 
   --color-menu: #1c1815;
 
-  --color-form-main: #141414;
-  --color-form-disabled: #272626;
-  --color-form-border: #e5e7eb;
+  --color-form-main: #f3f3f3;
+  --color-form-disabled: #c0c0c0;
+  --color-form-border: #95979b;
 
   --color-mask: #212d42;
 
