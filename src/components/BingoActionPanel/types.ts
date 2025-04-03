@@ -10,9 +10,9 @@ export interface BingoActionPanelProps {
   /** Function to set selected card */
   onSelectCard: (cardName: string) => void
   /** Selected card type */
-  selectCardType?: AvailableCardTypes
+  selectCardType?: number
   /** Function to set selected card type */
-  onSelectCardType?: (cardType: AvailableCardTypes) => void
+  onSelectCardType?: (cardType: number) => void
   /** Function to shuffle items */
   shuffleItems?: () => void
 }

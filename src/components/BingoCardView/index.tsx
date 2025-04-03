@@ -26,18 +26,7 @@ function BingoCardView({
   onSelectItem,
   onSwitchItem
 }: BingoCardViewProps) {
-  const cardSize = useMemo(() => {
-    switch (type) {
-      case "3x3":
-        return 3
-      case "4x4":
-        return 4
-      case "5x5":
-        return 5
-      default:
-        return 3
-    }
-  }, [type])
+  const cardSize = type
   const bingoItems = useMemo(() => {
     const allItems = card.items.slice(0, cardSize * cardSize)
     const bingoItems = []
@@ -108,7 +97,7 @@ function BingoItemView({
       onLongPress()
     }
   }
-  const longPressEvent = useLongPress(handleLongTouch, handleClick, true, 300)
+  const longPressEvent = useLongPress(handleLongTouch, handleClick, true, 800)
   return (
     <motion.div
       {...longPressEvent}

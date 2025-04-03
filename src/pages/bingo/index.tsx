@@ -1,5 +1,6 @@
 import BingoActionPanel from "@/components/BingoActionPanel"
 import BingoCardView from "@/components/BingoCardView"
+import BingoWinner from "@/components/BingoWinner"
 import { AvailableCardTypes, BingoItem } from "@/consts/types/bingo"
 import {
   useBingoCardInfoWithChangeFunctions,
@@ -11,15 +12,30 @@ import Foundation from "@/ui/Layout/Foundation"
 import Frame from "@/ui/Layout/Frame"
 import Room, { HiddenRoom } from "@/ui/Layout/Room"
 import Title from "@/ui/Presentation/Title"
+import Portal from "@/ui/Skeleton/Portal"
 import { useState } from "react"
 
 export default function BingoPage() {
   const bingoCards = useBingoList()
   const [selectedFileName, setSelectedFileName] = useState<string>("")
-  const [selectedCardType, setSelectedCardType] =
-    useState<AvailableCardTypes>("3x3")
-  const [bingoCard, shuffleBingoCard, handleSelectItems, handleSwitchItems] =
-    useBingoCardInfoWithChangeFunctions(selectedFileName, bingoCards)
+  const [selectedCardType, setSelectedCardType] = useState<number>(3)
+  const [
+    bingoCard,
+    isBingo,
+    shuffleBingoCard,
+    handleSelectItems,
+    handleSwitchItems
+  ] = useBingoCardInfoWithChangeFunctions(
+    selectedFileName,
+    bingoCards,
+    selectedCardType
+  )
+  const handleChangeCardType = (cardType: number) => {
+    setSelectedCardType(cardType)
+    if (bingoCard) {
+      shuffleBingoCard()
+    }
+  }
   return (
     <Foundation>
       <Frame>
@@ -33,7 +49,7 @@ export default function BingoPage() {
               selectedCard={selectedFileName}
               onSelectCard={setSelectedFileName}
               selectCardType={selectedCardType}
-              onSelectCardType={setSelectedCardType}
+              onSelectCardType={handleChangeCardType}
               shuffleItems={shuffleBingoCard}
             />
           </Room>
@@ -47,6 +63,11 @@ export default function BingoPage() {
               />
             )}
           </HiddenRoom>
+          {isBingo && (
+            <Portal>
+              <BingoWinner />
+            </Portal>
+          )}
         </WallDecorated>
       </Frame>
     </Foundation>

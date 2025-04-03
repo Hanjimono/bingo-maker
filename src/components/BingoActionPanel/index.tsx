@@ -11,9 +11,9 @@ import Button from "@/ui/Actions/Button"
 import clsx from "clsx"
 
 const CARD_TYPES = [
-  { title: "3x3", value: "3x3" },
-  { title: "4x4", value: "4x4" },
-  { title: "5x5", value: "5x5" }
+  { title: "3x3", value: 3 },
+  { title: "4x4", value: 4 },
+  { title: "5x5", value: 5 }
 ]
 
 function BingoActionPanel({
@@ -53,12 +53,10 @@ function BingoActionPanel({
             name="bingoCardType"
             label="Select bingo card type"
             options={CARD_TYPES}
-            onChange={(name, value) =>
-              onSelectCardType(value as AvailableCardTypes)
-            }
+            onChange={(name, value) => onSelectCardType(value as number)}
             value={selectCardType}
             multiselect={false}
-            onClear={() => onSelectCardType("3x3")}
+            onClear={() => onSelectCardType(3)}
             clearable
           />
         </Pillar>

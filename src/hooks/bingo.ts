@@ -1,4 +1,9 @@
-import { BingoCard, BingoCardList, BingoItem } from "@/consts/types/bingo"
+import {
+  BingoCard,
+  BingoCardList,
+  BingoItem,
+  BingoWinners
+} from "@/consts/types/bingo"
 import { useCallback, useEffect, useState } from "react"
 
 const PATH_TO_BINGO_CARDS_LIST = "/bingoList.json"
@@ -31,14 +36,17 @@ export const useBingoList = (): BingoCardList => {
 
 export const useBingoCardInfoWithChangeFunctions = (
   fileName: string,
-  list: BingoCardList
+  list: BingoCardList,
+  cardSize: number
 ): [
   BingoCard | null,
+  boolean,
   () => void,
   (itemName: string) => void,
   (itemName: string, cardSize: number) => void
 ] => {
   const [bingoCard, setBingoCard] = useState<BingoCard | null>(null)
+  const [isBingo, setIsBingo] = useState(false)
   useEffect(() => {
     const getInfo = async () => {
       if (!fileName) {
@@ -59,7 +67,12 @@ export const useBingoCardInfoWithChangeFunctions = (
       setBingoCard({
         ...bingoCardInfo,
         items: shuffleBingoItems(bingoItems),
-        selectedItems: []
+        selectedItems: [],
+        winners: {
+          rows: [],
+          columns: [],
+          diagonals: []
+        }
       })
     }
     getInfo()
@@ -72,7 +85,12 @@ export const useBingoCardInfoWithChangeFunctions = (
     setBingoCard({
       ...bingoCard,
       items: shuffledItems,
-      selectedItems: []
+      selectedItems: [],
+      winners: {
+        rows: [],
+        columns: [],
+        diagonals: []
+      }
     })
   }, [bingoCard])
   const handleSelectItem = useCallback(
@@ -84,12 +102,109 @@ export const useBingoCardInfoWithChangeFunctions = (
       const updatedSelectedItems = selectedItems.includes(itemName)
         ? selectedItems.filter((item) => item !== itemName)
         : [...selectedItems, itemName]
+      const updatedWinners = calculateBingoWinners(
+        bingoCard.items,
+        updatedSelectedItems,
+        bingoCard.winners
+      )
       setBingoCard({
         ...bingoCard,
-        selectedItems: updatedSelectedItems
+        selectedItems: updatedSelectedItems,
+        winners: updatedWinners
       })
     },
     [bingoCard]
+  )
+  const calculateBingoWinners = useCallback(
+    (
+      bingoItems: BingoItem[],
+      selectedItems: string[],
+      previousWinners?: BingoWinners
+    ) => {
+      const currentWinners: BingoWinners = {
+        rows: Array(cardSize).fill(false),
+        columns: Array(cardSize).fill(false),
+        diagonals: Array(2).fill(false)
+      }
+      let hasBingo = false
+      const currentBingoItems = bingoItems.slice(0, cardSize * cardSize)
+      const bingoItemsMatrix: BingoItem[][] = []
+      for (let i = 0; i < cardSize; i++) {
+        bingoItemsMatrix.push(
+          currentBingoItems.slice(i * cardSize, (i + 1) * cardSize)
+        )
+      }
+      console.log("🚀 ---------------------------------------🚀")
+      console.log("🚀 ~ bingoItemsMatrix:", bingoItemsMatrix)
+      console.log("🚀 ---------------------------------------🚀")
+      for (let i = 0; i < cardSize; i++) {
+        currentWinners.rows[i] = bingoItemsMatrix[i].every((item) =>
+          selectedItems.includes(typeof item === "string" ? item : item.name)
+        )
+        if (
+          currentWinners.rows[i] === true &&
+          (!previousWinners || !!!previousWinners.rows[i])
+        ) {
+          hasBingo = true
+        }
+      }
+      for (let i = 0; i < cardSize; i++) {
+        currentWinners.columns[i] = bingoItemsMatrix.every((row) => {
+          const item = row[i]
+          console.log(
+            "🚀 ------------------------------------------------------------------🚀"
+          )
+          console.log(
+            "🚀 ~ currentWinners.columns[i]=bingoItemsMatrix.every ~ item:",
+            item
+          )
+          console.log(
+            "🚀 ------------------------------------------------------------------🚀"
+          )
+          return selectedItems.includes(
+            typeof item === "string" ? item : item.name
+          )
+        })
+        if (
+          currentWinners.columns[i] === true &&
+          (!previousWinners || !!!previousWinners.columns[i])
+        ) {
+          hasBingo = true
+        }
+      }
+      currentWinners.diagonals[0] = bingoItemsMatrix.every((row, i) => {
+        const item = row[i]
+        return selectedItems.includes(
+          typeof item === "string" ? item : item.name
+        )
+      })
+      if (
+        currentWinners.diagonals[0] === true &&
+        (!previousWinners || !!!previousWinners.diagonals[0])
+      ) {
+        hasBingo = true
+      }
+      currentWinners.diagonals[1] = bingoItemsMatrix.every((row, i) => {
+        const item = row[cardSize - 1 - i]
+        return selectedItems.includes(
+          typeof item === "string" ? item : item.name
+        )
+      })
+      if (
+        currentWinners.diagonals[1] === true &&
+        (!previousWinners || !!!previousWinners.diagonals[1])
+      ) {
+        hasBingo = true
+      }
+      if (hasBingo) {
+        setIsBingo(true)
+        setTimeout(() => {
+          setIsBingo(false)
+        }, 5000)
+      }
+      return currentWinners
+    },
+    [cardSize]
   )
   const handleSwitchItem = useCallback(
     (itemName: string, cardSize: number) => {
@@ -118,14 +233,25 @@ export const useBingoCardInfoWithChangeFunctions = (
         bingoItems[randomIndexGreaterThanCardSize] = bingoItems[itemIndex]
         bingoItems[itemIndex] = temp
       }
-
+      const updatedWinners = calculateBingoWinners(
+        bingoItems,
+        updatedSelectedItems,
+        bingoCard.winners
+      )
       setBingoCard({
         ...bingoCard,
         items: bingoItems,
-        selectedItems: updatedSelectedItems
+        selectedItems: updatedSelectedItems,
+        winners: updatedWinners
       })
     },
     [bingoCard]
   )
-  return [bingoCard, shuffleBingoCard, handleSelectItem, handleSwitchItem]
+  return [
+    bingoCard,
+    isBingo,
+    shuffleBingoCard,
+    handleSelectItem,
+    handleSwitchItem
+  ]
 }
