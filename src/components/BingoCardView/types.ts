@@ -7,4 +7,6 @@ export interface BingoCardViewProps {
   type: AvailableCardTypes
   /** Function to select an item */
   onSelectItem: (itemName: string) => void
+  /** Function to switch item */
+  onSwitchItem: (itemName: string, size: number) => void
 }

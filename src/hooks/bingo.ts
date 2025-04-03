@@ -32,7 +32,12 @@ export const useBingoList = (): BingoCardList => {
 export const useBingoCardInfoWithChangeFunctions = (
   fileName: string,
   list: BingoCardList
-): [BingoCard | null, () => void, (itemName: string) => void] => {
+): [
+  BingoCard | null,
+  () => void,
+  (itemName: string) => void,
+  (itemName: string, cardSize: number) => void
+] => {
   const [bingoCard, setBingoCard] = useState<BingoCard | null>(null)
   useEffect(() => {
     const getInfo = async () => {
@@ -86,5 +91,41 @@ export const useBingoCardInfoWithChangeFunctions = (
     },
     [bingoCard]
   )
-  return [bingoCard, shuffleBingoCard, handleSelectItem]
+  const handleSwitchItem = useCallback(
+    (itemName: string, cardSize: number) => {
+      if (!bingoCard) {
+        return null
+      }
+      if (!bingoCard.items || bingoCard.items.length <= cardSize) {
+        return null
+      }
+      const selectedItems = bingoCard.selectedItems || []
+      const updatedSelectedItems = selectedItems.includes(itemName)
+        ? selectedItems.filter((item) => item !== itemName)
+        : [...selectedItems]
+
+      const bingoItems = [...bingoCard.items]
+      const itemIndex = bingoItems.findIndex((item) =>
+        typeof item === "string" ? item === itemName : item.name === itemName
+      )
+
+      if (itemIndex !== -1) {
+        const randomIndexGreaterThanCardSize =
+          Math.floor(Math.random() * (bingoItems.length - cardSize - 1)) +
+          cardSize +
+          1
+        const temp = bingoItems[randomIndexGreaterThanCardSize]
+        bingoItems[randomIndexGreaterThanCardSize] = bingoItems[itemIndex]
+        bingoItems[itemIndex] = temp
+      }
+
+      setBingoCard({
+        ...bingoCard,
+        items: bingoItems,
+        selectedItems: updatedSelectedItems
+      })
+    },
+    [bingoCard]
+  )
+  return [bingoCard, shuffleBingoCard, handleSelectItem, handleSwitchItem]
 }

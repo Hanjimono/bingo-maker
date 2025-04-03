@@ -17,7 +17,7 @@ export default function BingoPage() {
   const [selectedFileName, setSelectedFileName] = useState<string>("")
   const [selectedCardType, setSelectedCardType] =
     useState<AvailableCardTypes>("3x3")
-  const [bingoCard, shuffleBingoCard, handleSelectItems] =
+  const [bingoCard, shuffleBingoCard, handleSelectItems, handleSwitchItems] =
     useBingoCardInfoWithChangeFunctions(selectedFileName, bingoCards)
   return (
     <Foundation>
@@ -39,6 +39,7 @@ export default function BingoPage() {
               card={bingoCard}
               type={selectedCardType}
               onSelectItem={handleSelectItems}
+              onSwitchItem={handleSwitchItems}
             />
           )}
         </WallDecorated>
