@@ -23,7 +23,9 @@ function BingoActionPanel({
   onSelectCard,
   selectCardType,
   onSelectCardType,
-  shuffleItems
+  shuffleItems,
+  onPlay,
+  isRevealing
 }: BingoActionPanelProps) {
   const formattedBingoSelectList = useMemo(() => {
     return bingoCards.map((card) => {
@@ -64,6 +66,13 @@ function BingoActionPanel({
       {shuffleItems && selectedCard && (
         <Pillar sm={3} xs={4}>
           <Button onClick={() => shuffleItems()}>Shuffle items</Button>
+        </Pillar>
+      )}
+      {onPlay && selectedCard && (
+        <Pillar sm={3} xs={4}>
+          <Button onClick={() => onPlay()} disabled={isRevealing}>
+            Play
+          </Button>
         </Pillar>
       )}
     </Beam>

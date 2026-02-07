@@ -15,4 +15,8 @@ export interface BingoActionPanelProps {
   onSelectCardType?: (cardType: number) => void
   /** Function to shuffle items */
   shuffleItems?: () => void
+  /** Function to start play (reveal animation then shuffled card with secret) */
+  onPlay?: () => void
+  /** Whether the reveal animation is running (disable Play button) */
+  isRevealing?: boolean
 }

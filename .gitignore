@@ -27,3 +27,4 @@ dist-ssr
 .yarnrc.yml
 public/bingoList.json
 public/bingo/*.json
+.env

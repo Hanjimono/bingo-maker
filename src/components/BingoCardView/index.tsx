@@ -24,7 +24,8 @@ function BingoCardView({
   card,
   type,
   onSelectItem,
-  onSwitchItem
+  onSwitchItem,
+  onRevealSecretItem
 }: BingoCardViewProps) {
   const cardSize = type
   const bingoItems = useMemo(() => {
@@ -56,16 +57,27 @@ function BingoCardView({
             contentJustify="center"
           >
             {row.map((item, index) => {
+              const itemName = getItemName(item)
+              const isSecret =
+                card.secretItemNames?.includes(itemName) ?? false
               return (
                 <BingoItemView
                   item={item}
-                  onClick={() => onSelectItem(getItemName(item))}
+                  onClick={() => {
+                    if (isSecret && onRevealSecretItem) {
+                      onRevealSecretItem(itemName)
+                    } else {
+                      onSelectItem(itemName)
+                    }
+                  }}
                   onLongPress={() =>
+                    !isSecret &&
                     onSwitchItem(getItemName(item), cardSize * cardSize)
                   }
                   isSelected={
                     card.selectedItems?.includes(getItemName(item)) ?? false
                   }
+                  isSecret={isSecret}
                 />
               )
             })}
@@ -80,12 +92,14 @@ function BingoItemView({
   item,
   onClick,
   onLongPress,
-  isSelected = false
+  isSelected = false,
+  isSecret = false
 }: {
   item: BingoItem
   onClick?: () => void
   onLongPress?: () => void
   isSelected?: boolean
+  isSecret?: boolean
 }) {
   const handleClick = () => {
     if (onClick) {
@@ -97,7 +111,12 @@ function BingoItemView({
       onLongPress()
     }
   }
-  const longPressEvent = useLongPress(handleLongTouch, handleClick, true, 800)
+  const longPressEvent = useLongPress(
+    isSecret ? () => {} : handleLongTouch,
+    handleClick,
+    true,
+    800
+  )
   return (
     <motion.div
       {...longPressEvent}
@@ -106,9 +125,13 @@ function BingoItemView({
       animate={{ scale: 1 }}
       exit={{ scale: 0 }}
       key={getItemName(item)}
-      className="relative min-w-32 min-h-32 max-w-32 max-h-32 border-2 border-form-border rounded-sm  flex items-center justify-center bg-block-500 hover:bg-block-400 cursor-pointer content-center text-center p-3 overflow-hidden break-after-auto"
+      className={
+        isSecret
+          ? "relative min-w-32 min-h-32 max-w-32 max-h-32 border-2 border-amber-500 rounded-sm flex items-center justify-center bg-amber-950/80 hover:bg-amber-900/80 cursor-pointer content-center text-center p-3 overflow-hidden break-after-auto text-amber-200 font-semibold"
+          : "relative min-w-32 min-h-32 max-w-32 max-h-32 border-2 border-form-border rounded-sm  flex items-center justify-center bg-block-500 hover:bg-block-400 cursor-pointer content-center text-center p-3 overflow-hidden break-after-auto"
+      }
     >
-      {getItemName(item)}
+      {isSecret ? "Secret" : getItemName(item)}
       {isSelected && (
         <span className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm">
           <Icon className="text-red-400" type="md" name="close" size={128} />

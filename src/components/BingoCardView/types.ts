@@ -9,4 +9,6 @@ export interface BingoCardViewProps {
   onSelectItem: (itemName: string) => void
   /** Function to switch item */
   onSwitchItem: (itemName: string, size: number) => void
+  /** Function to reveal a secret item (show its name) */
+  onRevealSecretItem?: (itemName: string) => void
 }

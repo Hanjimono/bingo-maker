@@ -35,6 +35,8 @@ export interface BingoCard extends BingoCardBase {
   selectedItems?: string[]
   /** Winners calculated from selected items */
   winners?: BingoWinners
+  /** Item names that are hidden as "secret" until clicked */
+  secretItemNames?: string[]
 }
 
 export type AvailableCardTypes = "3x3" | "4x4" | "5x5"

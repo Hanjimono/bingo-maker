@@ -1,36 +1,22 @@
+// System
+import { useCallback, useEffect, useState } from "react"
+// Lib
+import { trpc } from "@/lib/trpc"
+// Types
 import {
   BingoCard,
   BingoCardList,
   BingoItem,
   BingoWinners
 } from "@/consts/types/bingo"
-import { useCallback, useEffect, useState } from "react"
-
-const PATH_TO_BINGO_CARDS_LIST = "/bingoList.json"
-const PATH_TO_BINGO_CARDS = "/bingo"
 
 const shuffleBingoItems = (bingoItems: BingoItem[]): BingoItem[] => {
   const shuffledItems = [...bingoItems].sort(() => Math.random() - 0.5)
   return shuffledItems
 }
 
-const getBingoCardsList = async (): Promise<BingoCardList> => {
-  const result = await fetch(PATH_TO_BINGO_CARDS_LIST)
-  if (!result.ok) {
-    return []
-  }
-  return await result.json()
-}
-
 export const useBingoList = (): BingoCardList => {
-  const [bingoList, setBingoList] = useState<BingoCardList>([])
-  useEffect(() => {
-    const getInfo = async () => {
-      const bingoCards = await getBingoCardsList()
-      setBingoList(bingoCards)
-    }
-    getInfo()
-  }, [])
+  const { data: bingoList = [] } = trpc.bingo.getList.useQuery()
   return bingoList
 }
 
@@ -43,40 +29,46 @@ export const useBingoCardInfoWithChangeFunctions = (
   boolean,
   () => void,
   (itemName: string) => void,
-  (itemName: string, cardSize: number) => void
+  (itemName: string, cardSize: number) => void,
+  () => void,
+  { items: BingoItem[]; secretIndex: number } | null,
+  number,
+  (itemName: string) => void
 ] => {
   const [bingoCard, setBingoCard] = useState<BingoCard | null>(null)
   const [isBingo, setIsBingo] = useState(false)
-  useEffect(() => {
-    const getInfo = async () => {
-      if (!fileName) {
-        setBingoCard(null)
-        return null
-      }
-      const result = await fetch(`${PATH_TO_BINGO_CARDS}/${fileName}`)
-      if (!result.ok) {
-        setBingoCard(null)
-        return null
-      }
-      const bingoItems = (await result.json()) as BingoItem[]
-      const bingoCardInfo = list.find((card) => card.fileName === fileName)
-      if (!bingoCardInfo) {
-        setBingoCard(null)
-        return null
-      }
-      setBingoCard({
-        ...bingoCardInfo,
-        items: shuffleBingoItems(bingoItems),
-        selectedItems: [],
-        winners: {
-          rows: [],
-          columns: [],
-          diagonals: []
-        }
-      })
+
+  const { data: bingoItems, error } = trpc.bingo.getCard.useQuery(
+    { fileName },
+    {
+      enabled: !!fileName
     }
-    getInfo()
-  }, [fileName, list])
+  )
+
+  useEffect(() => {
+    if (!fileName || error) {
+      setBingoCard(null)
+      return
+    }
+    if (!bingoItems) {
+      return
+    }
+    const bingoCardInfo = list.find((card) => card.fileName === fileName)
+    if (!bingoCardInfo) {
+      setBingoCard(null)
+      return
+    }
+    setBingoCard({
+      ...bingoCardInfo,
+      items: shuffleBingoItems(bingoItems),
+      selectedItems: [],
+      winners: {
+        rows: [],
+        columns: [],
+        diagonals: []
+      }
+    })
+  }, [fileName, bingoItems, list, error])
   const shuffleBingoCard = useCallback(() => {
     if (!bingoCard) {
       return null
@@ -247,11 +239,82 @@ export const useBingoCardInfoWithChangeFunctions = (
     },
     [bingoCard]
   )
+  const [revealPhase, setRevealPhase] = useState<{
+    items: BingoItem[]
+    secretIndex: number
+  } | null>(null)
+  const [revealCurrentIndex, setRevealCurrentIndex] = useState(0)
+
+  const startPlay = useCallback(() => {
+    if (!bingoCard) return
+    const shuffledItems = shuffleBingoItems(bingoCard.items)
+    const cardSizeSq = cardSize * cardSize
+    const visibleItems = shuffledItems.slice(0, cardSizeSq)
+    const secretIndex = Math.floor(Math.random() * visibleItems.length)
+    const formattedVisibleItems = visibleItems.map((item, idx) => {
+      if (idx === secretIndex) {
+        return "Секрет"
+      }
+      return item
+    })
+    setRevealPhase({ items: formattedVisibleItems, secretIndex })
+    setRevealCurrentIndex(0)
+  }, [bingoCard, cardSize])
+
+  useEffect(() => {
+    if (!revealPhase) return
+    const total = revealPhase.items.length
+    if (revealCurrentIndex >= total) {
+      const cardInfo = list.find((c) => c.fileName === fileName)
+      if (cardInfo) {
+        const secretName =
+          typeof revealPhase.items[revealPhase.secretIndex] === "string"
+            ? (revealPhase.items[revealPhase.secretIndex] as string)
+            : (revealPhase.items[revealPhase.secretIndex] as { name: string })
+                .name
+        setBingoCard({
+          ...cardInfo,
+          items: revealPhase.items,
+          selectedItems: [],
+          winners: {
+            rows: Array(cardSize).fill(false),
+            columns: Array(cardSize).fill(false),
+            diagonals: Array(2).fill(false)
+          },
+          secretItemNames: [secretName]
+        })
+      }
+      setRevealPhase(null)
+      setRevealCurrentIndex(0)
+      return
+    }
+    const t = setTimeout(() => {
+      setRevealCurrentIndex((i) => i + 1)
+    }, 1500)
+    return () => clearTimeout(t)
+  }, [revealPhase, revealCurrentIndex, list, fileName, cardSize])
+
+  const handleRevealSecretItem = useCallback(
+    (itemName: string) => {
+      if (!bingoCard?.secretItemNames) return
+      const next = bingoCard.secretItemNames.filter((n) => n !== itemName)
+      setBingoCard({
+        ...bingoCard,
+        secretItemNames: next.length ? next : undefined
+      })
+    },
+    [bingoCard]
+  )
+
   return [
     bingoCard,
     isBingo,
     shuffleBingoCard,
     handleSelectItem,
-    handleSwitchItem
+    handleSwitchItem,
+    startPlay,
+    revealPhase,
+    revealCurrentIndex,
+    handleRevealSecretItem
   ]
 }
