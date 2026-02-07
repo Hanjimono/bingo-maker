@@ -37,7 +37,7 @@ function BingoActionPanel({
   }, [bingoCards])
   return (
     <Beam className={clsx(className, "content-end")} bottomGap={"same-level"}>
-      <Pillar sm={6}>
+      <Pillar sm={6} xs={6}>
         <Select
           name="bingo"
           label="Select bingo card"
@@ -50,7 +50,7 @@ function BingoActionPanel({
         />
       </Pillar>
       {onSelectCardType && (
-        <Pillar sm={3} xs={4}>
+        <Pillar sm={2} xs={2}>
           <Select
             name="bingoCardType"
             label="Select bingo card type"
@@ -64,15 +64,15 @@ function BingoActionPanel({
         </Pillar>
       )}
       {shuffleItems && selectedCard && (
-        <Pillar sm={3} xs={4}>
-          <Button onClick={() => shuffleItems()}>Shuffle items</Button>
-        </Pillar>
-      )}
-      {onPlay && selectedCard && (
-        <Pillar sm={3} xs={4}>
-          <Button onClick={() => onPlay()} disabled={isRevealing}>
-            Play
-          </Button>
+        <Pillar sm={4} xs={4}>
+          <div className="flex gap-2">
+            <Button onClick={() => shuffleItems()}>Shuffle items</Button>
+            {onPlay && selectedCard && (
+              <Button onClick={() => onPlay()} disabled={isRevealing}>
+                Play
+              </Button>
+            )}
+          </div>
         </Pillar>
       )}
     </Beam>
